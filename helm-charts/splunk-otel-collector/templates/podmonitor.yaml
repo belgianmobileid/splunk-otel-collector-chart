@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: otel-collector-podmonitor
+  namespace: bmid-monitoring
+spec:
+  selector:
+    matchLabels:
+      app: splunk-otel-collector
+  namespaceSelector:
+    matchNames:
+    - bmid-monitoring
+  podMetricsEndpoints:
+  - port: metrics
+    path: /metrics
+    interval: 15s
+    relabelings:
+    - sourceLabels: [__meta_kubernetes_pod_label_app]
+      targetLabel: app_name
+    - sourceLabels: [__meta_kubernetes_pod_label_component]
+      targetLabel: component_type
+    - sourceLabels: [__meta_kubernetes_pod_label_release]
+      targetLabel: release
