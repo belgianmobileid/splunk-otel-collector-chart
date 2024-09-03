@@ -1,0 +1,56 @@
+# This file is release.yaml + cluster_values.yaml combined
+clusterName: "itsme-dev-weu-aks02"
+environment: "dev"
+agent:
+  ports:
+    metrics:
+      containerPort: 8889
+      protocol: TCP
+      enabled_for: [metrics]
+  controlPlaneMetrics:
+    apiserver:
+      enabled: false
+    controllerManager:
+      enabled: false
+    coredns:
+      enabled: false
+splunkPlatform:
+  logsEnabled: true
+  metricsEnabled: true
+  tracesEnabled: false
+  endpoint: https://splunk-hec.prd.itsme.internal:8088
+  insecureSkipVerify: true
+  index: "azure_k8s_events"
+  metricsIndex: "default_metrics_index"
+splunkObservability:
+  metricsEnabled: true
+  tracesEnabled: false
+  logsEnabled: false
+cloudProvider: "azure"
+distribution: "aks"
+clusterReceiver:
+  enabled: false
+image:
+  otelcol:
+    repository: bmidazurecontainerregistry.azurecr.io/infra/splunk/splunk-otel-collector
+secret:
+  create: false
+  name: "splunk-credentials"
+tolerations:
+- effect: NoSchedule
+  key: CriticalAddonsOnly
+  value: "true"
+priorityClassName: "high-priority"
+logsCollection:
+  containers:
+    multilineConfigs:
+    - namespaceName:
+        value: apr-gtw-b2bportal
+      podName:
+        value: .*
+        useRegexp: true
+      containerName:
+        value: .*
+        useRegexp: true
+      firstEntryRegex: "^[TAF]:.*"
+      combineWith: ""
