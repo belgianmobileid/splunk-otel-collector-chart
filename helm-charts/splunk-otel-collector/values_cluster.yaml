@@ -54,3 +54,4 @@ logsCollection:
         useRegexp: true
       firstEntryRegex: "^[TAF]:.*"
       combineWith: ""
+#

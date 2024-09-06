@@ -252,7 +252,7 @@ extraAttributes:
   #      from: pod
   #      tag_name: "$$1"
   fromLabels:
-    - key: app
+  - key: app
 
   # Annotations that will be collected from k8s pods (or namespaces) (in case they are set)
   # and added as extra attributes to the telemetry in the following format:
@@ -263,8 +263,8 @@ extraAttributes:
   # List of hardcoded key/value pairs that will be added as attributes to
   # all the telemetry.
   custom: []
-    # - name: "account_id"
-    #   value: "1234567890"
+  # - name: "account_id"
+  #   value: "1234567890"
 
 ################################################################################
 # OPTIONAL CONFIGURATIONS OF PARTICULAR O11Y COLLECTOR COMPONENTS
@@ -616,19 +616,19 @@ logsCollection:
     # Set to 0 to remove any size limit.
     maxRecombineLogSize: 1048576
 
-# Configuration for collecting journald logs using otel collector
+  # Configuration for collecting journald logs using otel collector
   journald:
     enabled: false
     # Please update directory path for journald if it's different from below default value "/run/log/journal"
     directory: /run/log/journal
     # List of service units to collect journald logs for and configuration for each.
     units:
-      - name: kubelet
-        priority: info
-      - name: docker
-        priority: info
-      - name: containerd
-        priority: info
+    - name: kubelet
+      priority: info
+    - name: docker
+      priority: info
+    - name: containerd
+      priority: info
     # Route journald logs to its own Splunk Index by specifying the index value below, else leave it blank. Please make sure the index exist in Splunk and is configured to receive HEC traffic. Not applicable to Splunk Observability.
     index: ""
 
@@ -880,48 +880,48 @@ fluentd:
           regexp: (?<time>\d{4}-[0-1]\d-[0-3]\d [0-2]\d:[0-5]\d:[0-5]\d\.\d{6})
           format: "%Y-%m-%d %H:%M:%S.%N"
       kube-apiserver:
-        <<: *glog
+        !!merge <<: *glog
         from:
           pod: kube-apiserver
         sourcetype: kube:kube-apiserver
       kube-scheduler:
-        <<: *glog
+        !!merge <<: *glog
         from:
           pod: kube-scheduler
         sourcetype: kube:kube-scheduler
       kube-controller-manager:
-        <<: *glog
+        !!merge <<: *glog
         from:
           pod: kube-controller-manager
         sourcetype: kube:kube-controller-manager
       kube-proxy:
-        <<: *glog
+        !!merge <<: *glog
         from:
           pod: kube-proxy
         sourcetype: kube:kube-proxy
       kubedns:
-        <<: *glog
+        !!merge <<: *glog
         from:
           pod: kube-dns
         sourcetype: kube:kubedns
       dnsmasq:
-        <<: *glog
+        !!merge <<: *glog
         from:
           pod: kube-dns
         sourcetype: kube:dnsmasq
       dns-sidecar:
-        <<: *glog
+        !!merge <<: *glog
         from:
           pod: kube-dns
           container: sidecar
         sourcetype: kube:kubedns-sidecar
       dns-controller:
-        <<: *glog
+        !!merge <<: *glog
         from:
           pod: dns-controller
         sourcetype: kube:dns-controller
       kube-dns-autoscaler:
-        <<: *glog
+        !!merge <<: *glog
         from:
           pod: kube-dns-autoscaler
           container: autoscaler
@@ -976,10 +976,10 @@ image:
 ## Limits how many pods may be unavailable due to voluntary disruptions.
 ## https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 podDisruptionBudget: {}
-  # Minimum number of pods (as a number or percentage) that must remain available.
-  # minAvailable:
-  # Maximum number of pods (as a number or percentage) that can be unavailable.
-  # maxUnavailable:
+# Minimum number of pods (as a number or percentage) that must remain available.
+# minAvailable:
+# Maximum number of pods (as a number or percentage) that can be unavailable.
+# maxUnavailable:
 
 serviceAccount:
   # Specifies whether a ServiceAccount should be created
@@ -1007,10 +1007,10 @@ secret:
 # This default tolerations allow the daemonset to be deployed on control-plane
 # nodes, so that we can also collect logs and metrics from those nodes.
 tolerations:
-  - key: node-role.kubernetes.io/master
-    effect: NoSchedule
-  - key: node-role.kubernetes.io/control-plane
-    effect: NoSchedule
+- key: node-role.kubernetes.io/master
+  effect: NoSchedule
+- key: node-role.kubernetes.io/control-plane
+  effect: NoSchedule
 
 # Defines which nodes should be selected to deploy the o11y collector daemonset.
 nodeSelector: {}
@@ -1176,11 +1176,11 @@ operator:
       # will default to the gateway, given it is enabled. If neither the agent nor the gateway is enabled, the endpoint
       # must be overridden here.
       # exporter:
-        # endpoint: http://$(SPLUNK_OTEL_AGENT):4317
+      # endpoint: http://$(SPLUNK_OTEL_AGENT):4317
       # Optional "sampler" parameter for enabling trace sampling, see: https://opentelemetry.io/docs/concepts/sdk-configuration/general-sdk-configuration/#otel_traces_sampler
       # sampler:
-        # type: traceidratio
-        # argument: "0.95"
+      # type: traceidratio
+      # argument: "0.95"
       # Optional "environment variable" parameters that can configure all instrumentation libraries.
       # If splunkObservability.profilingEnabled=true, environment variables enabling profiling will be added automatically.
       # env:
@@ -1204,8 +1204,8 @@ operator:
         repository: ghcr.io/signalfx/splunk-otel-dotnet/splunk-otel-dotnet
         tag: v1.4.0
         env:
-          - name: OTEL_DOTNET_AUTO_PLUGINS
-            value: Splunk.OpenTelemetry.AutoInstrumentation.Plugin, Splunk.OpenTelemetry.AutoInstrumentation
+        - name: OTEL_DOTNET_AUTO_PLUGINS
+          value: Splunk.OpenTelemetry.AutoInstrumentation.Plugin, Splunk.OpenTelemetry.AutoInstrumentation
       go:
         repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-go
         tag: v0.10.1-alpha
@@ -1218,7 +1218,7 @@ operator:
       nginx:
         repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd
         tag: 1.0.4
-      # Auto-instrumentation Libraries (End)
+        # Auto-instrumentation Libraries (End)
   admissionWebhooks:
     certManager:
       # Annotate the certificate and issuer to ensure they are created after the cert-manager CRDs have been installed.
